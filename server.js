@@ -66,6 +66,9 @@ router.get("/query", function(req, res) {
 // parse various different custom JSON types as JSON
 app.use(bodyParser.json({ type: 'application/*+json' }))
 
+// make express look in the public directory for assets (css/js/img)
+app.use(express.static(__dirname + '/public'));
+
 app.use("/", router)
 
 app.use("*",function(req,res) {
