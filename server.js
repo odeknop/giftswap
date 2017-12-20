@@ -17,6 +17,8 @@ var jsonParser = bodyParser.json()
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+var port = process.env.PORT || 8080;
+
 router.use(function (req,res,next) {
 	console.log("/" + req.method)
 	next()
@@ -70,6 +72,6 @@ app.use("*",function(req,res) {
 	res.sendFile(path + "404.html")
 });
 
-app.listen(3000,function() {
-	console.log("Server running at port 3000...")
+app.listen(port, function() {
+	console.log('App is running on http://localhost:' + port)
 });
