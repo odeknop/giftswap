@@ -69,6 +69,7 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 app.use(express.static(__dirname + '/public'));
 
 router.get("/preview", function(req, res) {
+	res.setHeader('Content-Type', 'application/json');
 	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
 	preview = {
 		"payload": {
