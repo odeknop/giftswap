@@ -26,6 +26,7 @@ router.get("/",function(req,res) {
 	res.sendFile(path + "index.html")
 })
 
+
 router.get("/product/:id",function(req, res) {
 	console.log(req.params.name)
 	res.send('{"id": 1,"name":"iPhone 6","price":"800.00"}')
@@ -67,6 +68,23 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 // make express look in the public directory for assets (css/js/img)
 app.use(express.static(__dirname + '/public'));
 
+router.get("/preview", function(req, res) {
+	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
+	preview = {
+		"payload": {
+			"template_type": "generic",
+			"elements": [
+				{
+					"title": giftTitle,
+	      			"image_url": req.query.giftPicture,
+	      			"subtitle": req.query.giftLocation,
+				},
+			]
+		}
+	}
+	res.send(preview)
+})
+
 app.use("/", router)
 
 app.use("*",function(req,res) {
@@ -76,3 +94,5 @@ app.use("*",function(req,res) {
 app.listen(port, function() {
 	console.log('App is running on http://localhost:' + port)
 });
+
+
