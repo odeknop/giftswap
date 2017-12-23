@@ -89,7 +89,17 @@ router.get("/preview", function(req, res) {
 	      								"type": "show_block",
 			              				"block_names": ["Gift preview description"],
 			              				"title": "Voir la description"
-	      							}
+	      							},
+	      							{
+	      								"type": "show_block",
+			              				"block_names": ["Vendre un gift"],
+			              				"title": "Modifier"
+	      							},
+	      							{
+	      								"type": "show_block",
+			              				"block_names": ["Publier"],
+			              				"title": "Publier"
+	      							},
 	      						]
    							}
    						]
