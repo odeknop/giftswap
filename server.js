@@ -71,35 +71,31 @@ app.use(express.static(__dirname + '/public'));
 router.get("/preview", function(req, res) {
 	res.setHeader('Content-Type', 'application/json');
 	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
-	/*preview = {
- 		"messages": [
-    	{
-      		"attachment": {
-	        	"type":"template",
-	        	"payload": {
-	          		"template_type":"generic",
-	          		"image_aspect_ratio": "square",
-	          		"top_element_style":"large",
-	          		"elements":[
-	            	{
-	              		"title": giftTitle,
-	      				"image_url": req.query.giftPicture,
-	      				"subtitle": req.query.giftLocation,
-	              		"buttons":[
-	                	{
-	                  		"type": "show_block",
-              				"block_names": ["Gift preview description"],
-              				"title": "Voir la description"
-	            		}]
-	            	}
-	          	]}
-      		}
-    	}]
-	}*/
 	preview = {
  		"messages": [
-   			{"text": "Welcome to the Chatfuel Rockets!"},
-   			{"text": "What are you up to?"}
+   			{
+   				"attachment": {
+   					"type": "template",
+   					"payload": {
+   						"template_type": "generic",
+   						"image_aspect_ratio": "square",
+   						"elements": [
+   							{
+   								"title": giftTitle,
+	      						"image_url": req.query.giftPicture,
+	      						"subtitle": req.query.giftLocation,
+	      						"buttons": [
+	      							{
+	      								"type": "show_block",
+			              				"block_names": ["Gift preview description"],
+			              				"title": "Voir la description"
+	      							}
+	      						]
+   							}
+   						]
+   					}
+   				}
+   			}
  		]
 	}
 	res.send(preview)
