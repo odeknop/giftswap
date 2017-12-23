@@ -82,6 +82,31 @@ router.get("/preview", function(req, res) {
 			]
 		}
 	}
+	preview = {
+ 		"messages": [
+    	{
+      		"attachment": {
+	        	"type":"template",
+	        	"payload": {
+	          		"template_type":"generic",
+	          		"image_aspect_ratio": "square",
+	          		"top_element_style":"large",
+	          		"elements":[
+	            	{
+	              		"title": giftTitle,
+	      				"image_url": req.query.giftPicture,
+	      				"subtitle": req.query.giftLocation,
+	              		"buttons":[
+	                	{
+	                  		"type": "show_block",
+              				"block_names": ["Gift preview description"],
+              				"title": "Voir la description"
+	            		}]
+	            	}
+	          	]}
+      		}
+    	}]
+	}
 	res.send(preview)
 })
 
