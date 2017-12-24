@@ -129,7 +129,7 @@ router.get("/gifts/:id/contact", function(req, res) {
 	   						"elements": [
 	   						{
 	   							"title": vendor.firstName,
-	   							"subtitle": gift.title
+	   							"subtitle": gift.title,
 								"image_url": vendor.profilePicUrl,
 								"buttons": [
 								{
