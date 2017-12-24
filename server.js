@@ -147,9 +147,9 @@ router.get("/gifts/:id/contact", function(req, res) {
 	   				}
 	   			}]
 			}
+			res.setHeader('Content-Type', 'application/json');
+			res.send(json)
 		})
-		res.setHeader('Content-Type', 'application/json');
-		res.send(json)
 	})
 })
 
