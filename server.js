@@ -85,8 +85,14 @@ router.get("/gifts/:id/description", function(req, res) {
 			ID: req.params.id,
 		}
 	}).then(gift => {
+		json = {
+			"messages": [
+			{
+				"text": gift.description,
+   			}]
+		}
 		res.setHeader('Content-Type', 'application/json');
-		res.send(gift.description)
+		res.send(json)
 	})
 })
 
