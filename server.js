@@ -44,10 +44,21 @@ router.get("/gifts", function(req, res) {
 	models.Gift.findAll({limit: 10}).then(gifts => {
 		elements = []
 		gifts.forEach(function(gift) {
+			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			element = {
 				"title": gift.title,
 				"image_url": gift.picture,
 				"subtitle": gift.location,
+				"buttons": [
+					{
+						"type": "web_url",
+          				"url": url,
+          				"title": "Voir la description"
+					},
+					{
+						"type":"element_share",
+					}
+				]
 			}
 			elements.push(element)
 		})
@@ -65,6 +76,17 @@ router.get("/gifts", function(req, res) {
 		}
 		res.setHeader('Content-Type', 'application/json');
 		res.send(json)
+	})
+})
+
+router.get("/gifts/:id/description", function(req, res) {
+	models.Gift.findOne({
+		where: {
+			ID: req.params.id,
+		}
+	}).then(gift => {
+		res.setHeader('Content-Type', 'application/json');
+		res.send(gift.description)
 	})
 })
 
