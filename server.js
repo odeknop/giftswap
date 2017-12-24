@@ -32,33 +32,39 @@ router.get("/product/:id",function(req, res) {
 	res.send('{"id": 1,"name":"iPhone 6","price":"800.00"}')
 })
 
-const VeloInfo = sequelize.define('velo_info', {
-	uid: {
-		type: Sequelize.INTEGER,
-		primaryKey: true
-	},
-	id: Sequelize.INTEGER,
-	imei: Sequelize.STRING,
-	license_plate: Sequelize.STRING,
-	is_reserved: Sequelize.BOOLEAN,
-	loc_valid: Sequelize.BOOLEAN,
-	lat: Sequelize.FLOAT,
-	lng: Sequelize.FLOAT,
-	moving: Sequelize.BOOLEAN,
-	state: Sequelize.INTEGER,
-	ts: Sequelize.DATE,
-	dt_server: Sequelize.DATE,
-	dt_device: Sequelize.DATE,
-	updated_at: Sequelize.DATE
-}, 
-{
-	timestamps: false,
-	tableName: 'velo_info',
+const models = require('./models')
+
+router.get("/users", function(req, res) {
+	models.User.findAll({limit: 10}).then(users => {
+		res.send(users)
+	})
 })
 
-router.get("/query", function(req, res) {
-	VeloInfo.findAll({limit: 10}).then(velos => {
-		res.send(velos)
+router.get("/gifts", function(req, res) {
+	models.Gift.findAll({limit: 10}).then(gifts => {
+		elements = []
+		gifts.forEach(function(gift) {
+			element = {
+				"title": gift.title,
+				"image_url": gift.picture,
+				"subtitle": gift.location,
+			}
+			elements.push(element)
+		})
+		json = {
+			"messages": [{
+   				"attachment": {
+   					"type": "template",
+   					"payload": {
+   						"template_type": "generic",
+   						"image_aspect_ratio": "square",
+   						"elements": elements
+   					}
+   				}
+   			}]
+		}
+		res.setHeader('Content-Type', 'application/json');
+		res.send(json)
 	})
 })
 
