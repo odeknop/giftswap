@@ -51,7 +51,7 @@ router.get("/gifts", function(req, res) {
 				"subtitle": gift.location,
 				"buttons": [
 					{
-						"type": "web_url",
+						"type": "json_plugin_url",
           				"url": url,
           				"title": "Voir la description"
 					},
