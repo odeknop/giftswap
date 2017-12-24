@@ -45,11 +45,21 @@ router.get("/gifts", function(req, res) {
 		elements = []
 		gifts.forEach(function(gift) {
 			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
+			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/contact"
 			element = {
 				"title": gift.title,
 				"image_url": gift.picture,
 				"subtitle": gift.location,
 				"buttons": [
+					{
+						"set_attributes": 
+						{
+							"selectedGiftId": gift.ID,
+						},
+						"url": contactUrl,
+						"type": "json_plugin_url",
+          				"title": "Contacter le vendeur"
+					},
 					{
 						"type": "json_plugin_url",
           				"url": url,
@@ -79,6 +89,7 @@ router.get("/gifts", function(req, res) {
 	})
 })
 
+// gift description
 router.get("/gifts/:id/description", function(req, res) {
 	models.Gift.findOne({
 		where: {
@@ -91,6 +102,51 @@ router.get("/gifts/:id/description", function(req, res) {
 				"text": gift.description,
    			}]
 		}
+		res.setHeader('Content-Type', 'application/json');
+		res.send(json)
+	})
+})
+
+// gift selection
+router.get("/gifts/:id/contact", function(req, res) {
+	models.Gift.findOne({
+		where: {
+			ID: req.params.id,
+		}
+	}).then(gift => {
+		models.User.findOne({
+			where: {
+				ID: gift.owner,
+			}
+		}).then(vendor => {
+			json = {
+				"messages": [{
+	   				"attachment": {
+	   					"type": "template",
+	   					"payload": {
+	   						"template_type": "generic",
+	   						"image_aspect_ratio": "square",
+	   						"elements": [
+	   						{
+	   							"title": vendor.firstName,
+								"image_url": vendor.profilePicUrl,
+								"buttons": [
+								{
+									"title": "Contacter le vendeur",
+									"type": "show_block",
+									"block_names": ["Contacter le vendeur"],
+								},
+								{
+									"title": "Acheter",
+									"type": "show_block",
+									"block_names": ["Acheter"],
+								}]
+	   						}]
+	   					}
+	   				}
+	   			}]
+			}
+		})
 		res.setHeader('Content-Type', 'application/json');
 		res.send(json)
 	})
