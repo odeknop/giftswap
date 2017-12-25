@@ -71,7 +71,7 @@ router.get("/gifts", function(req, res) {
 					"type": "json_plugin_url",
 					"url": prevUrl,
 					"title": "Page précédente"
-				}
+				},
 				]
 			}
 			elements.push(prevElement)
@@ -108,7 +108,6 @@ router.get("/gifts", function(req, res) {
 		})
 
 		if(addNext == true) {
-			console.log("WHY?????")
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
