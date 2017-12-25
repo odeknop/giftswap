@@ -36,8 +36,47 @@ router.get("/users", function(req, res) {
 
 // all gifts
 router.get("/gifts", function(req, res) {
-	models.Gift.findAll({limit: 10}).then(gifts => {
+
+	offset = parseInt(req.query.offset)
+	limit = parseInt(req.query.limit)
+
+	addNext = false
+
+	models.Gift.findAll({
+		offset: offset,
+		limit: limit + 1
+	}).then(result => {
+		if(result.length > limit) {
+			addNext = true
+		}
+	})
+
+	models.Gift.findAll({
+		limit: limit,
+		offset: offset,
+		order: [
+		['ID', 'asc'],
+		]
+	}).then(gifts => {
 		elements = []
+
+		if(offset > 0) {
+			prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
+			prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
+			prevUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + prevOffset + "&limit=" + prevLimit
+			prevElement = {
+				"title": "Pagination",
+				"buttons": [
+				{
+					"type": "json_plugin_url",
+					"url": prevUrl,
+					"title": "Page précédente"
+				}
+				]
+			}
+			elements.push(prevElement)
+		}
+
 		gifts.forEach(function(gift) {
 			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
@@ -46,38 +85,57 @@ router.get("/gifts", function(req, res) {
 				"image_url": gift.picture,
 				"subtitle": gift.location,
 				"buttons": [
+				{
+					"set_attributes": 
 					{
-						"set_attributes": 
-						{
-							"selectedGiftId": gift.ID,
-						},
-						"url": contactUrl,
-						"type": "json_plugin_url",
-          				"title": "Contacter le vendeur"
+						"selectedGiftId": gift.ID,
 					},
-					{
-						"type": "json_plugin_url",
-          				"url": url,
-          				"title": "Voir la description"
-					},
-					{
-						"type":"element_share",
-					}
+					"url": contactUrl,
+					"type": "json_plugin_url",
+					"title": "Contacter le vendeur"
+				},
+				{
+					"type": "json_plugin_url",
+					"url": url,
+					"title": "Voir la description"
+				},
+				{
+					"type":"element_share",
+				}
 				]
 			}
 			elements.push(element)
 		})
+
+		if(addNext == true) {
+			console.log("WHY?????")
+			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
+			nextLimit = 8
+			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
+			nextElement = {
+				"title": "Navigation",
+				"buttons": [
+				{
+					"type": "json_plugin_url",
+					"url": nextUrl,
+					"title": "Page suivante"
+				}
+				]
+			}
+			elements.push(nextElement)
+		}
+
 		json = {
 			"messages": [{
-   				"attachment": {
-   					"type": "template",
-   					"payload": {
-   						"template_type": "generic",
-   						"image_aspect_ratio": "square",
-   						"elements": elements
-   					}
-   				}
-   			}]
+				"attachment": {
+					"type": "template",
+					"payload": {
+						"template_type": "generic",
+						"image_aspect_ratio": "square",
+						"elements": elements
+					}
+				}
+			}]
 		}
 		res.send(json)
 	})
@@ -94,7 +152,7 @@ router.get("/gifts/:id/description", function(req, res) {
 			"messages": [
 			{
 				"text": gift.description,
-   			}]
+			}]
 		}
 		res.send(json)
 	})
@@ -114,15 +172,15 @@ router.get("/gifts/:id/vendor", function(req, res) {
 		}).then(vendor => {
 			json = {
 				"messages": [{
-	   				"attachment": {
-	   					"type": "template",
-	   					"payload": {
-	   						"template_type": "generic",
-	   						"image_aspect_ratio": "square",
-	   						"elements": [
-	   						{
-	   							"title": vendor.firstName,
-	   							"subtitle": gift.title,
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "generic",
+							"image_aspect_ratio": "square",
+							"elements": [
+							{
+								"title": vendor.firstName,
+								"subtitle": gift.title,
 								"image_url": vendor.profilePicUrl,
 								"buttons": [
 								{
@@ -135,10 +193,10 @@ router.get("/gifts/:id/vendor", function(req, res) {
 									"type": "show_block",
 									"block_names": ["Acheter"],
 								}]
-	   						}]
-	   					}
-	   				}
-	   			}]
+							}]
+						}
+					}
+				}]
 			}
 			res.send(json)
 		})
@@ -154,41 +212,41 @@ app.use(express.static(__dirname + '/public'));
 router.get("/preview", function(req, res) {
 	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
 	preview = {
- 		"messages": [
-   			{
-   				"attachment": {
-   					"type": "template",
-   					"payload": {
-   						"template_type": "generic",
-   						"image_aspect_ratio": "square",
-   						"elements": [
-   							{
-   								"title": giftTitle,
-	      						"image_url": req.query.giftPicture,
-	      						"subtitle": req.query.giftLocation,
-	      						"buttons": [
-	      							{
-	      								"type": "show_block",
-			              				"block_names": ["Gift preview description"],
-			              				"title": "Voir la description"
-	      							},
-	      							{
-	      								"type": "show_block",
-			              				"block_names": ["Vendre un gift"],
-			              				"title": "Modifier"
-	      							},
-	      							{
-	      								"type": "show_block",
-			              				"block_names": ["Publier"],
-			              				"title": "Publier"
-	      							},
-	      						]
-   							}
-   						]
-   					}
-   				}
-   			}
- 		]
+		"messages": [
+		{
+			"attachment": {
+				"type": "template",
+				"payload": {
+					"template_type": "generic",
+					"image_aspect_ratio": "square",
+					"elements": [
+					{
+						"title": giftTitle,
+						"image_url": req.query.giftPicture,
+						"subtitle": req.query.giftLocation,
+						"buttons": [
+						{
+							"type": "show_block",
+							"block_names": ["Gift preview description"],
+							"title": "Voir la description"
+						},
+						{
+							"type": "show_block",
+							"block_names": ["Vendre un gift"],
+							"title": "Modifier"
+						},
+						{
+							"type": "show_block",
+							"block_names": ["Publier"],
+							"title": "Publier"
+						},
+						]
+					}
+					]
+				}
+			}
+		}
+		]
 	}
 	res.send(preview)
 })
