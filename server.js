@@ -18,18 +18,12 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 var port = process.env.PORT || 8080;
 
 router.use(function (req,res,next) {
-	console.log("/" + req.method)
+	console.log("/" + req.method + " " + req.path)
 	next()
 })
 
 router.get("/",function(req,res) {
 	res.sendFile(path + "index.html")
-})
-
-
-router.get("/product/:id",function(req, res) {
-	console.log(req.params.name)
-	res.send('{"id": 1,"name":"iPhone 6","price":"800.00"}')
 })
 
 const models = require('./models')
@@ -40,12 +34,13 @@ router.get("/users", function(req, res) {
 	})
 })
 
+// all gifts
 router.get("/gifts", function(req, res) {
 	models.Gift.findAll({limit: 10}).then(gifts => {
 		elements = []
 		gifts.forEach(function(gift) {
 			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
-			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/contact"
+			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			element = {
 				"title": gift.title,
 				"image_url": gift.picture,
@@ -84,7 +79,6 @@ router.get("/gifts", function(req, res) {
    				}
    			}]
 		}
-		res.setHeader('Content-Type', 'application/json');
 		res.send(json)
 	})
 })
@@ -102,13 +96,12 @@ router.get("/gifts/:id/description", function(req, res) {
 				"text": gift.description,
    			}]
 		}
-		res.setHeader('Content-Type', 'application/json');
 		res.send(json)
 	})
 })
 
 // gift selection
-router.get("/gifts/:id/contact", function(req, res) {
+router.get("/gifts/:id/vendor", function(req, res) {
 	models.Gift.findOne({
 		where: {
 			ID: req.params.id,
@@ -147,7 +140,6 @@ router.get("/gifts/:id/contact", function(req, res) {
 	   				}
 	   			}]
 			}
-			res.setHeader('Content-Type', 'application/json');
 			res.send(json)
 		})
 	})
@@ -160,7 +152,6 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 app.use(express.static(__dirname + '/public'));
 
 router.get("/preview", function(req, res) {
-	res.setHeader('Content-Type', 'application/json');
 	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
 	preview = {
  		"messages": [
