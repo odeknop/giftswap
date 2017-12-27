@@ -15,16 +15,14 @@ exports.index = function(req, res, next) {
 			addNext = true
 		}
 	})
-
 	models.Gift.findAll({
 		limit: limit,
 		offset: offset,
 		order: [
-		['ID', 'asc'],
+		['ID', 'desc'],
 		]
 	}).then(gifts => {
 		elements = []
-
 		if(offset > 0) {
 			prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
 			prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
@@ -39,7 +37,6 @@ exports.index = function(req, res, next) {
 			}
 			elements.push(prevElement)
 		}
-
 		gifts.forEach(function(gift) {
 			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
