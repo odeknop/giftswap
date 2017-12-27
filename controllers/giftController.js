@@ -2,11 +2,6 @@ const models = require('../models')
 
 exports.index = function(req, res, next) {
 	
-	if(isNaN(req.query) || isNaN(req.query.offset) || isNaN(req.query.limit)) {
-		err = {"status": 400, "message": "Bad Request - Your request is missing parameters." }
-		return next(err)
-	}
-	
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
 
