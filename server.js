@@ -66,13 +66,11 @@ router.get("/gifts", function(req, res) {
 			prevUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + prevOffset + "&limit=" + prevLimit
 			prevElement = {
 				"title": "Pagination",
-				"buttons": [
-				{
+				"buttons": [{
 					"type": "json_plugin_url",
 					"url": prevUrl,
 					"title": "Page précédente"
-				},
-				]
+				}]
 			}
 			elements.push(prevElement)
 		}
@@ -84,46 +82,44 @@ router.get("/gifts", function(req, res) {
 				"title": gift.title,
 				"image_url": gift.picture,
 				"subtitle": gift.location,
-				"buttons": [
-				{
-					"set_attributes": 
+				"buttons": [{
+					"set_attributes":
 					{
 						"selectedGiftId": gift.ID,
 					},
 					"url": contactUrl,
 					"type": "json_plugin_url",
-					"title": "Contacter le vendeur"
+					"title": "Intéressé"
 				},
 				{
+					"set_attributes":
+					{
+						"selectedGiftId": gift.ID,
+					},
 					"type": "json_plugin_url",
 					"url": url,
 					"title": "Voir la description"
 				},
 				{
 					"type":"element_share",
-				}
-				]
+				}]
 			}
 			elements.push(element)
 		})
-
 		if(addNext == true) {
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
 			nextElement = {
 				"title": "Navigation",
-				"buttons": [
-				{
+				"buttons": [{
 					"type": "json_plugin_url",
 					"url": nextUrl,
 					"title": "Page suivante"
-				}
-				]
+				}]
 			}
 			elements.push(nextElement)
 		}
-
 		json = {
 			"messages": [{
 				"attachment": {
@@ -148,9 +144,24 @@ router.get("/gifts/:id/description", function(req, res) {
 		}
 	}).then(gift => {
 		json = {
-			"messages": [
-			{
-				"text": gift.description,
+			"messages": [{
+				"attachment": {
+					"type": "template",
+					"payload": {
+						"template_type": "button",
+						"text": gift.description,
+						"buttons": [{
+							"title": "Contacter le vendeur",
+							"type": "show_block",
+							"block_names": ["Contacter le vendeur"],
+						},
+						{
+							"title": "Acheter",
+							"type": "show_block",
+							"block_names": ["Acheter"],
+						}]
+					}
+				}
 			}]
 		}
 		res.send(json)
@@ -176,13 +187,11 @@ router.get("/gifts/:id/vendor", function(req, res) {
 						"payload": {
 							"template_type": "generic",
 							"image_aspect_ratio": "square",
-							"elements": [
-							{
+							"elements": [{
 								"title": vendor.firstName,
 								"subtitle": gift.title,
 								"image_url": vendor.profilePicUrl,
-								"buttons": [
-								{
+								"buttons": [{
 									"title": "Contacter le vendeur",
 									"type": "show_block",
 									"block_names": ["Contacter le vendeur"],
@@ -211,20 +220,17 @@ app.use(express.static(__dirname + '/public'));
 router.get("/preview", function(req, res) {
 	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
 	preview = {
-		"messages": [
-		{
+		"messages": [{
 			"attachment": {
 				"type": "template",
 				"payload": {
 					"template_type": "generic",
 					"image_aspect_ratio": "square",
-					"elements": [
-					{
+					"elements": [{
 						"title": giftTitle,
 						"image_url": req.query.giftPicture,
 						"subtitle": req.query.giftLocation,
-						"buttons": [
-						{
+						"buttons": [{
 							"type": "show_block",
 							"block_names": ["Gift preview description"],
 							"title": "Voir la description"
@@ -238,14 +244,11 @@ router.get("/preview", function(req, res) {
 							"type": "show_block",
 							"block_names": ["Publier"],
 							"title": "Publier"
-						},
-						]
-					}
-					]
+						}]
+					}]
 				}
 			}
-		}
-		]
+		}]
 	}
 	res.send(preview)
 })
