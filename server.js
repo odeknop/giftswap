@@ -1,6 +1,14 @@
 require('dotenv').config()
 var express = require("express")
 var app = express()
+
+var path = require('path');
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+
 var router = express.Router()
 var path = __dirname + '/views/'
 var bodyParser = require('body-parser')
@@ -17,12 +25,12 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 var port = process.env.PORT || 8080;
 
-router.use(function (req,res,next) {
+router.use(function (req, res, next) {
 	console.log("/" + req.method + " " + req.path)
 	next()
 })
 
-router.get("/",function(req,res) {
+router.get("/",function(req, res) {
 	res.sendFile(path + "index.html")
 })
 
@@ -35,10 +43,15 @@ router.get("/users", function(req, res) {
 })
 
 // all gifts
-router.get("/gifts", function(req, res) {
+router.get("/gifts", function(req, res, next) {
 
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
+
+	if(isNaN(offset) || isNaN(limit)) {
+		err = {"status": 400, "message": "Bad Request - Your request is missing parameters." }
+		return next(err)
+	}
 
 	addNext = false
 
@@ -254,6 +267,14 @@ router.get("/preview", function(req, res) {
 })
 
 app.use("/", router)
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500)
+    res.render('error', {
+        message: err.message,
+        error: {"status": err.status, "stack": err.stack}
+    })
+})
 
 app.use("*",function(req,res) {
 	res.sendFile(path + "404.html")
