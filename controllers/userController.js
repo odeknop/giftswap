@@ -1,16 +1,6 @@
 const models = require('../models')
 const sequelize = require('sequelize')
 
-exports.users = function(req, res) {
-	models.User.findOne({
-		where: {
-			ID: req.params.id
-		}
-	}).then(user => {
-
-	})
-}
-
 exports.user_gifts = function(req, res) {
 
 	offset = parseInt(req.query.offset)
@@ -55,7 +45,7 @@ exports.user_gifts = function(req, res) {
 			title = gift.title
 			interestsCount = gift.dataValues.interestsCount
 			if(interestsCount > 0) {
-				title = "[👤 " + interestsCount + "]" + title
+				title = interestsCount + " 👤 " + title
 			}
 			element = {
 				"title": title,
