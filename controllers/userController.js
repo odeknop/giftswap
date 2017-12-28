@@ -1,4 +1,5 @@
 const models = require('../models')
+const sequelize = require('sequelize')
 
 exports.users = function(req, res) {
 	models.User.findOne({
@@ -18,13 +19,18 @@ exports.user_gifts = function(req, res) {
 	addNext = false
 	elements = []
 
+	// More info about subqueries at http://srlm.io/2015/02/04/sequelize-subqueries/
 	models.Gift.findAll({
+		attributes: Object.keys(models.Gift.attributes).concat([[
+			sequelize.literal('(SELECT COUNT(*) FROM interests WHERE interests."giftId" = Gift."ID")'),
+			'interestsCount'
+		]]),
 		where: {
 			owner: req.params.id,
 		},
 		offset: offset,
 		limit: limit + 1,
-		order: [['ID', 'desc']]
+		order: [sequelize.literal('"interestsCount" DESC')]
 	}).each((gift, index, length) => {
 		if(index == 0) {
 			if(length > limit) {
@@ -46,8 +52,13 @@ exports.user_gifts = function(req, res) {
 			}
 		}
 		if(index < limit) {
+			title = gift.title
+			interestsCount = gift.dataValues.interestsCount
+			if(interestsCount > 0) {
+				title = "[" + interestsCount + "] " + title
+			}
 			element = {
-				"title": gift.title,
+				"title": title,
 				"image_url": gift.picture,
 				"subtitle": gift.location,
 				"buttons": [{
