@@ -55,7 +55,7 @@ exports.user_gifts = function(req, res) {
 			title = gift.title
 			interestsCount = gift.dataValues.interestsCount
 			if(interestsCount > 0) {
-				title = "" + interestsCount + " 👤\n\n" + title
+				title = "" + interestsCount + " 👤\n \n" + title
 			}
 			element = {
 				"title": title,
