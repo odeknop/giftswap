@@ -202,7 +202,7 @@ exports.user_gifts_interests = function(req, res) {
 						"msgRecipient": owner.uid,
 					},
 					"type": "show_block",
-					"block_names": ["Send message"],
+					"block_names": ["Send Message"],
 					"title": "Envoyer un message"
 				}]
 			}
