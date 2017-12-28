@@ -65,7 +65,7 @@ exports.user_gifts = function(req, res) {
 					{
 						"selectedGiftId": gifts[i].ID,
 					},
-					"block_names": ["Liste d'intéressés"],
+					"block_names": ["Gift interests list"],
 					"type": "show_block",
 					"title": "Liste d'intéressés"
 				},
