@@ -1,41 +1,50 @@
 const models = require('../models')
+const sequelize = require('sequelize')
 
 exports.index = function(req, res, next) {
 	
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
+	buyerId = parseInt(req.query.buyerId)
+	include = []
 
 	addNext = false
+	elements = []
+
+	models.Gift.hasMany(models.Interest, {foreignKey: 'giftId'})
+
+	if(buyerId) {
+		include = [{
+			"model": models.Interest, "where": {"buyerId": buyerId}
+		}]
+	}
 
 	models.Gift.findAll({
+		limit: limit + 1,
 		offset: offset,
-		limit: limit + 1
-	}).then(result => {
-		if(result.length > limit) {
-			addNext = true
-		}
-	})
-	models.Gift.findAll({
-		limit: limit,
-		offset: offset,
-		order: [['ID', 'desc']]
-	}).then(gifts => {
-		elements = []
-		if(offset > 0) {
-			prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
-			prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
-			prevUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + prevOffset + "&limit=" + prevLimit
-			prevElement = {
-				"title": "Pagination",
-				"buttons": [{
-					"type": "json_plugin_url",
-					"url": prevUrl,
-					"title": "Page précédente"
-				}]
+		order: [['ID', 'desc']],
+		include: include,
+	}).each((gift, index, length) => {
+		if(index == 0) {
+			if(length > limit) {
+				addNext = true
 			}
-			elements.push(prevElement)
+			if(offset > 0) {
+				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
+				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
+				prevUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + prevOffset + "&limit=" + prevLimit + "&buyerId=" + buyerId
+				prevElement = {
+					"title": "Pagination",
+					"buttons": [{
+						"type": "json_plugin_url",
+						"url": prevUrl,
+						"title": "Page précédente"
+					}]
+				}
+				elements.push(prevElement)
+			}
 		}
-		gifts.forEach(function(gift) {
+		if(index < limit) {
 			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			element = {
@@ -65,11 +74,12 @@ exports.index = function(req, res, next) {
 				}]
 			}
 			elements.push(element)
-		})
+		}
+	}).then(() => {
 		if(addNext == true) {
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
-			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
+			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit + "&buyerId=" + buyerId
 			nextElement = {
 				"title": "Navigation",
 				"buttons": [{
@@ -80,17 +90,25 @@ exports.index = function(req, res, next) {
 			}
 			elements.push(nextElement)
 		}
-		json = {
-			"messages": [{
-				"attachment": {
-					"type": "template",
-					"payload": {
-						"template_type": "generic",
-						"image_aspect_ratio": "square",
-						"elements": elements
+		if(elements.length > 0) {
+			json = {
+				"messages": [{
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "generic",
+							"image_aspect_ratio": "square",
+							"elements": elements
+						}
 					}
-				}
-			}]
+				}]
+			}
+		} else {
+			json = {
+				"messages": [{
+					"text": "Je n'ai trouvé aucun Gift 😞"
+				}]
+			}
 		}
 		res.send(json)
 	})
