@@ -30,9 +30,9 @@ exports.user_gifts = function(req, res) {
 				"messages": [{
 					"text": "Il n'y a pas encore d'intérêts pour ce Gift 😞"
 				}]
-				res.send(json)
-				return
 			}
+			res.send(json)
+			return
 		}
 		if(gifts.length > limit) {
 			addNext = true
