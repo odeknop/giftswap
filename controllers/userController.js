@@ -16,6 +16,7 @@ exports.user_gifts = function(req, res) {
 	limit = parseInt(req.query.limit)
 
 	addNext = false
+	elements = []
 
 	models.Gift.findAll({
 		where: {
@@ -24,46 +25,35 @@ exports.user_gifts = function(req, res) {
 		offset: offset,
 		limit: limit + 1,
 		order: [['ID', 'desc']]
-	}).then(gifts => {
-		if(gifts.length == 0) {
-			json = {
-				"messages": [{
-					"text": "Tu n'as pas encore de Gifts à proposer 😞"
-				}]
+	}).each((gift, index, length) => {
+		if(index == 0) {
+			if(length > limit) {
+				addNext = true
 			}
-			res.send(json)
-			return
-		}
-		if(gifts.length > limit) {
-			addNext = true
-		}
-		elements = []
-		if(offset > 0) {
-			prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
-			prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
-			prevUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts?offset=" + prevOffset + "&limit=" + prevLimit
-			prevElement = {
-				"title": "Pagination",
-				"buttons": [{
-					"type": "json_plugin_url",
-					"url": prevUrl,
-					"title": "Page précédente"
-				}]
+			if(offset > 0) {
+				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
+				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
+				prevUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts?offset=" + prevOffset + "&limit=" + prevLimit
+				prevElement = {
+					"title": "Pagination",
+					"buttons": [{
+						"type": "json_plugin_url",
+						"url": prevUrl,
+						"title": "Page précédente"
+					}]
+				}
+				elements.push(prevElement)
 			}
-			elements.push(prevElement)
 		}
-		if(limit > gifts.length) {
-			limit = gifts.length
-		}
-		for (var i = 0; i < limit; i++) {
+		if(index < limit) {
 			element = {
-				"title": gifts[i].title,
-				"image_url": gifts[i].picture,
-				"subtitle": gifts[i].location,
+				"title": gift.title,
+				"image_url": gift.picture,
+				"subtitle": gift.location,
 				"buttons": [{
 					"set_attributes":
 					{
-						"selectedGiftId": gifts[i].ID,
+						"selectedGiftId": gift.ID,
 					},
 					"block_names": ["Modifier Gift"],
 					"type": "show_block",
@@ -72,7 +62,7 @@ exports.user_gifts = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"selectedGiftId": gifts[i].ID,
+						"selectedGiftId": gift.ID,
 					},
 					"block_names": ["Gift interests list"],
 					"type": "show_block",
@@ -81,7 +71,7 @@ exports.user_gifts = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"selectedGiftId": gifts[i].ID,
+						"selectedGiftId": gift.ID,
 					},
 					"type": "show_block",
 					"block_names": ["Retirer de la vente"],
@@ -90,6 +80,7 @@ exports.user_gifts = function(req, res) {
 			}
 			elements.push(element)
 		}
+	}).then(() => {
 		if(addNext == true) {
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
@@ -104,17 +95,25 @@ exports.user_gifts = function(req, res) {
 			}
 			elements.push(nextElement)
 		}
-		json = {
-			"messages": [{
-				"attachment": {
-					"type": "template",
-					"payload": {
-						"template_type": "generic",
-						"image_aspect_ratio": "square",
-						"elements": elements
+		if(elements.length > 0) {
+			json = {
+				"messages": [{
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "generic",
+							"image_aspect_ratio": "square",
+							"elements": elements
+						}
 					}
-				}
-			}]
+				}]
+			}
+		} else {
+			json = {
+				"messages": [{
+					"text": "Tu n'as pas encore de Gifts à proposer 😞"
+				}]
+			}
 		}
 		res.send(json)
 	})
