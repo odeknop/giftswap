@@ -25,6 +25,15 @@ exports.user_gifts = function(req, res) {
 		limit: limit + 1,
 		order: [['ID', 'desc']]
 	}).then(gifts => {
+		if(gifts.length == 0) {
+			json = {
+				"messages": [{
+					"text": "Il n'y a pas encore d'intérêts pour ce Gift 😞"
+				}]
+				res.send(json)
+				return
+			}
+		}
 		if(gifts.length > limit) {
 			addNext = true
 		}
