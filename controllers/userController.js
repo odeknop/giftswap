@@ -28,7 +28,7 @@ exports.user_gifts = function(req, res) {
 		if(gifts.length == 0) {
 			json = {
 				"messages": [{
-					"text": "Il n'y a pas encore d'intérêts pour ce Gift 😞"
+					"text": "Tu n'as pas encore de Gifts à proposer 😞"
 				}]
 			}
 			res.send(json)
@@ -141,7 +141,8 @@ exports.user_gifts_interests = function(req, res) {
 		owner = user
 		return models.Interest.findAll({
 			where: {
-				giftId: req.params.giftId,
+				ownerId: req.params.id,
+				giftId: req.params.giftId
 			},
 			include: [models.User, models.Gift],
 			offset: offset,
@@ -222,17 +223,25 @@ exports.user_gifts_interests = function(req, res) {
 			}
 			elements.push(nextElement)
 		}
-		json = {
-			"messages": [{
-				"attachment": {
-					"type": "template",
-					"payload": {
-						"template_type": "generic",
-						"image_aspect_ratio": "square",
-						"elements": elements
+		if(elements.length > 0) {
+			json = {
+				"messages": [{
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "generic",
+							"image_aspect_ratio": "square",
+							"elements": elements
+						}
 					}
-				}
-			}]
+				}]
+			}
+		} else {
+			json = {
+				"messages": [{
+					"text": "Il n'y a pas encore d'intérêts pour ce Gift 😞"
+				}]
+			}
 		}
 		res.send(json)
 	})
