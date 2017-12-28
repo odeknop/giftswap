@@ -18,9 +18,7 @@ exports.index = function(req, res, next) {
 	models.Gift.findAll({
 		limit: limit,
 		offset: offset,
-		order: [
-		['ID', 'desc'],
-		]
+		order: [['ID', 'desc']]
 	}).then(gifts => {
 		elements = []
 		if(offset > 0) {

@@ -28,9 +28,11 @@ app.use(express.static(__dirname + '/public'));
 
 var index = require('./routes/index')
 var gifts = require('./routes/gifts')
+var users = require('./routes/users')
 
 app.use('/', index)
 app.use('/gifts', gifts)
+app.use('/users', users)
 
 app.use(function(err, req, res, next) {
     res.status(err.status || 500)
@@ -41,7 +43,7 @@ app.use(function(err, req, res, next) {
 })
 
 app.use("*",function(req,res) {
-	res.sendFile(path.join(__dirname, 'views') + "404.html")
+	res.sendFile(path.join(__dirname, 'views', "404.html"))
 });
 
 var port = process.env.PORT || 8080;

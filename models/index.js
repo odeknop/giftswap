@@ -5,7 +5,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 // load models
 var models = [
   'Gift',
-  'User'
+  'User',
+  'Interest',
 ];
 
 models.forEach(function(model) {
