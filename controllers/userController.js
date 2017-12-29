@@ -190,7 +190,7 @@ exports.user_gifts_interests = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"actionedGiftId": interest.gift.ID,
+						"actionedGiftId": interest.gift.ID, // buyerId
 					},
 					"block_names": ["Refuser"],
 					"type": "show_block",
@@ -199,7 +199,7 @@ exports.user_gifts_interests = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"msgRecipient": owner.uid,
+						"msgRecipient": interest.user.uid,
 					},
 					"type": "show_block",
 					"block_names": ["Send Message"],
