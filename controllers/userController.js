@@ -22,7 +22,7 @@ exports.user_gifts = function(req, res) {
 		limit: limit + 1,
 		order: [sequelize.literal('"interestsCount" DESC')]
 	}).each((gift, index, length) => {
-		if(index == 0) {
+		if(index === 0) {
 			if(length > limit) {
 				addNext = true
 			}
@@ -82,8 +82,8 @@ exports.user_gifts = function(req, res) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext == true) {
-			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
+		if(addNext === true) {
+			nextOffset = offset === 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
 			nextElement = {
@@ -150,7 +150,7 @@ exports.user_gifts_interests = function(req, res) {
 			order: [['giftId','desc']]
 		})
 	}).each((interest, index, length) => {
-		if(index == 0) {
+		if(index === 0) {
 			if(length > limit) {
 				addNext = true
 			}
@@ -209,8 +209,8 @@ exports.user_gifts_interests = function(req, res) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext == true) {
-			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
+		if(addNext === true) {
+			nextOffset = offset === 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts/" + giftId + "interests?offset=" + nextOffset + "&limit=" + nextLimit
 			nextElement = {
