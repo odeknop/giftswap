@@ -25,7 +25,7 @@ exports.index = function(req, res, next) {
 		order: [['ID', 'desc']],
 		include: include,
 	}).each((gift, index, length) => {
-		if(index == 0) {
+		if(index === 0) {
 			if(length > limit) {
 				addNext = true
 			}
@@ -76,8 +76,8 @@ exports.index = function(req, res, next) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext == true) {
-			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
+		if(addNext === true) {
+			nextOffset = offset === 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit + "&buyerId=" + buyerId
 			nextElement = {
