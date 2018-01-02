@@ -45,8 +45,8 @@ exports.index = function(req, res, next) {
 			}
 		}
 		if(index < limit) {
-			url = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
-			contactUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
+			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
+			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			element = {
 				"title": gift.title,
 				"image_url": gift.picture,
@@ -56,7 +56,7 @@ exports.index = function(req, res, next) {
 					{
 						"selectedGiftId": gift.ID,
 					},
-					"url": contactUrl,
+					"url": vendorUrl,
 					"type": "json_plugin_url",
 					"title": "Intéressé"
 				},
@@ -66,7 +66,7 @@ exports.index = function(req, res, next) {
 						"selectedGiftId": gift.ID,
 					},
 					"type": "json_plugin_url",
-					"url": url,
+					"url": descriptionUrl,
 					"title": "Voir la description"
 				},
 				{
@@ -185,5 +185,103 @@ exports.gift_selection = function(req, res) {
 			}
 			res.send(json)
 		})
+	})
+}
+
+exports.gift_search = function(req, res) {
+	query = req.query.query
+	offset = parseInt(req.query.offset)
+	limit = parseInt(req.query.limit)
+
+	addNext = false
+	elements = []
+
+	models.Gift.search(query, offset, limit + 1).each((gift, index, length) => {
+		if(index == 0) {
+			if(length > limit) {
+				addNext = true
+			}
+			if(offset > 0) {
+				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
+				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
+				prevUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + query + "&offset=" + prevOffset + "&limit=" + prevLimit
+				prevElement = {
+					"title": "Pagination",
+					"buttons": [{
+						"type": "json_plugin_url",
+						"url": prevUrl,
+						"title": "Page précédente"
+					}]
+				}
+				elements.push(prevElement)
+			}
+		}
+		if(index < limit) {
+			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
+			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
+			element = {
+				"title": gift.title,
+				"image_url": gift.picture,
+				"subtitle": gift.location,
+				"buttons": [{
+					"set_attributes":
+					{
+						"selectedGiftId": gift.ID,
+					},
+					"url": vendorUrl,
+					"type": "json_plugin_url",
+					"title": "Intéressé"
+				},
+				{
+					"set_attributes":
+					{
+						"selectedGiftId": gift.ID,
+					},
+					"type": "json_plugin_url",
+					"url": descriptionUrl,
+					"title": "Voir la description"
+				},
+				{
+					"type":"element_share",
+				}]
+			}
+			elements.push(element)
+		}
+	}).then(() => {
+		if(addNext == true) {
+			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
+			nextLimit = 8
+			nextUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + query + "&offset=" + nextOffset + "&limit=" + nextLimit
+			nextElement = {
+				"title": "Navigation",
+				"buttons": [{
+					"type": "json_plugin_url",
+					"url": nextUrl,
+					"title": "Page suivante"
+				}]
+			}
+			elements.push(nextElement)
+		}
+		if(elements.length > 0) {
+			json = {
+				"messages": [{
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "generic",
+							"image_aspect_ratio": "square",
+							"elements": elements
+						}
+					}
+				}]
+			}
+		} else {
+			json = {
+				"messages": [{
+					"text": "Je n'ai trouvé aucun Gift 😞"
+				}]
+			}
+		}
+		res.send(json)
 	})
 }

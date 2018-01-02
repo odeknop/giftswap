@@ -9,6 +9,9 @@ var giftController = require('../controllers/giftController')
 /* GET all gifts. */
 router.get('/', giftController.index)
 
+/* GET search gifts */
+router.get('/search', giftController.gift_search)
+
 /* GET description of one Gift */
 router.get('/:id/description', giftController.gift_description)
 
