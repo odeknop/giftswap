@@ -36,6 +36,11 @@ exports.index = function(req, res, next) {
 				prevElement = {
 					"title": "Pagination",
 					"buttons": [{
+						"set_attributes":
+						{
+							"offset": prevOffset,
+							"limit": prevLimit
+						},
 						"type": "json_plugin_url",
 						"url": prevUrl,
 						"title": "Page précédente"
@@ -83,6 +88,11 @@ exports.index = function(req, res, next) {
 			nextElement = {
 				"title": "Navigation",
 				"buttons": [{
+					"set_attributes":
+					{
+						"offset": nextOffset,
+						"limit": nextLimit
+					},
 					"type": "json_plugin_url",
 					"url": nextUrl,
 					"title": "Page suivante"
@@ -100,7 +110,13 @@ exports.index = function(req, res, next) {
 							"image_aspect_ratio": "square",
 							"elements": elements
 						}
-					}
+					},
+					"quick_replies": [
+						{
+							"title": "Retour au menu",
+							"block_names": ["Mon compte"]
+						}
+					]
 				}]
 			}
 		} else {

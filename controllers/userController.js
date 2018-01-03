@@ -120,11 +120,6 @@ exports.user_gifts = function(req, res) {
 					},
 					"quick_replies": [
 						{
-							"set_attributes":
-							{
-								"offset": 0,
-								"limit": 9
-							},
 							"title": "Retour au menu",
 							"block_names": ["Mon compte"]
 						}
