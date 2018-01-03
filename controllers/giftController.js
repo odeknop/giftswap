@@ -190,13 +190,16 @@ exports.gift_selection = function(req, res) {
 
 exports.gift_search = function(req, res) {
 	query = req.query.query
+	from_lat = req.query.from_lat
+	from_long = req.query.from_long
+	radius = req.query.radius
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
 
 	addNext = false
 	elements = []
 
-	models.Gift.search(query, offset, limit + 1).each((gift, index, length) => {
+	models.Gift.search(query, from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
 		if(index == 0) {
 			if(length > limit) {
 				addNext = true
