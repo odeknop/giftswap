@@ -210,7 +210,7 @@ exports.gift_search = function(req, res) {
 	from_long = req.query.searchLongitude
 	searchRange = req.query.searchRange
 
-	radius = searchRange.split(' ')[0]
+	radius = parseInt(searchRange.split(' ')[0])*1000
 	console.log("radius=" + radius)
 
 	offset = parseInt(req.query.offset)
