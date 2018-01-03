@@ -236,8 +236,12 @@ exports.user_gifts_interests = function(req, res) {
 						}
 					}
 				},{
-					"text": "Retour",
-					"text": "Retour2",
+					"quick_replies": [
+						{
+							"title": "Retour",
+							"block_names": ["Liste de mes Gifts"]
+						}
+					],
 				}]
 			}
 		} else {
