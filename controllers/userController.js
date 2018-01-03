@@ -33,6 +33,11 @@ exports.user_gifts = function(req, res) {
 				prevElement = {
 					"title": "Pagination",
 					"buttons": [{
+						"set_attributes":
+						{
+							"offset": prevOffset,
+							"limit": prevLimit
+						},
 						"type": "json_plugin_url",
 						"url": prevUrl,
 						"title": "Page précédente"
@@ -90,6 +95,11 @@ exports.user_gifts = function(req, res) {
 			nextElement = {
 				"title": "Navigation",
 				"buttons": [{
+					"set_attributes":
+					{
+						"offset": nextOffset,
+						"limit": nextLimit
+					},
 					"type": "json_plugin_url",
 					"url": nextUrl,
 					"title": "Page suivante"
