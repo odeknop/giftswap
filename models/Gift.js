@@ -39,19 +39,19 @@ module.exports = function(sequelize, DataTypes) {
 		var Gift = this
 		var vectorName = "document"
 		sequelize
-			.query('ALTER TABLE "' + Gift.tableName + '" ADD COLUMN IF NOT EXISTS "' + vectorName + '" TSVECTOR')
-			.then( () => {
-				return sequelize
-					.query('UPDATE "' + Gift.tableName + '" SET "' + vectorName + '" = to_tsvector(\'french\', ' + searchFields.join(' || \' \' || ') + ')')
-			}).then( () => {
-				return sequelize
-					.query('CREATE INDEX IF NOT EXISTS fts_idx  ON "' + Gift.tableName + '" USING gin("' + vectorName + '");')
-			}).then( () => {
-			    return sequelize
-					.query('CREATE TRIGGER gift_vector_update BEFORE INSERT OR UPDATE ON "' + Gift.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.french\', ' + searchFields.join(', ') + ')')
-			}).catch( error => {
-				console.log("ERROR: " + error)
-			})
+		.query('ALTER TABLE "' + Gift.tableName + '" ADD COLUMN IF NOT EXISTS "' + vectorName + '" TSVECTOR')
+		.then( () => {
+			return sequelize
+			.query('UPDATE "' + Gift.tableName + '" SET "' + vectorName + '" = to_tsvector(\'french\', ' + searchFields.join(' || \' \' || ') + ')')
+		}).then( () => {
+			return sequelize
+			.query('CREATE INDEX IF NOT EXISTS fts_idx  ON "' + Gift.tableName + '" USING gin("' + vectorName + '");')
+		}).then( () => {
+			return sequelize
+			.query('CREATE TRIGGER gift_vector_update BEFORE INSERT OR UPDATE ON "' + Gift.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.french\', ' + searchFields.join(', ') + ')')
+		}).catch( error => {
+			console.log("ERROR: " + error)
+		})
 	}
 	return Gift
 }

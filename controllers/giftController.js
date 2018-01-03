@@ -189,17 +189,33 @@ exports.gift_selection = function(req, res) {
 }
 
 exports.gift_search = function(req, res) {
-	query = req.query.query
-	from_lat = req.query.from_lat
-	from_long = req.query.from_long
-	radius = req.query.radius
+
+	searchTerms = []
+	query = ''
+	if(req.query.searchKey1 != undefined) {
+		searchTerms.push(req.query.searchKey1)
+	}
+	if(req.query.searchKey2 != undefined) {
+		searchTerms.push(req.query.searchKey2)
+	}
+	if(req.query.searchKey2 != undefined) {
+		searchTerms.push(req.query.searchKey2)
+	}
+
+	searchTerms.forEach( term => {
+		query += term + ' '
+	})
+
+	from_lat = req.query.searchLatitude
+	from_long = req.query.searchLongitude
+	radius = req.query.searchRange
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
 
 	addNext = false
 	elements = []
 
-	models.Gift.search(query, from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
+	models.Gift.search(query.trim(), from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
 		if(index == 0) {
 			if(length > limit) {
 				addNext = true
