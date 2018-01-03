@@ -13,15 +13,27 @@ exports.index = function(req, res, next) {
 
 	models.Gift.hasMany(models.Interest, {foreignKey: 'giftId'})
 
+	offsetObj = {
+		offset: offset
+	}
+
+	limitObj = {}
+
+	if(limit) {
+		limitObj = {
+			limit: limit + 1
+		}
+	}
+
 	if(buyerId) {
 		include = [{
-			"model": models.Interest, "where": {"buyerId": buyerId}
+			model: models.Interest, "where": {"buyerId": buyerId}
 		}]
 	}
 
 	models.Gift.findAll({
-		limit: limit + 1,
-		offset: offset,
+		limitObj,
+		offsetObj,
 		order: [['ID', 'desc']],
 		include: include,
 	}).each((gift, index, length) => {
