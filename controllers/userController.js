@@ -44,9 +44,10 @@ exports.user_gifts = function(req, res) {
 		if(index < limit) {
 			interestsCount = gift.dataValues.interestsCount
 			console.log("interestsCount=" + interestsCount)
+			subtitle = gift.location
 			if(interestsCount > 0) {
 				person = interestsCount > 1 ? "intéressés" : "interessé"
-				subtitle = gift.location + "\n" + interestsCount + " 👤 " + person
+				subtitle += "\n" + interestsCount + " 👤 " + person
 			}
 			element = {
 				"title": gift.title,
