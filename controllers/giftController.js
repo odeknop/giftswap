@@ -242,10 +242,11 @@ exports.gift_search = function(req, res) {
 		if(index < limit) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
+			location = gift.location + "\n" + Number(Math.round(gift.dataValues.distance/1000+'e1')+'e-1') + " km"
 			element = {
 				"title": gift.title,
 				"image_url": gift.picture,
-				"subtitle": gift.location,
+				"subtitle": location,
 				"buttons": [{
 					"set_attributes":
 					{
