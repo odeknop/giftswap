@@ -13,5 +13,8 @@ models.forEach(function(model) {
   module.exports[model] = sequelize.import(__dirname + '/' + model);
 });
 
+sequelize.sync().then(() => {
+	module.exports.Gift.addFullTextIndex()
+})
 
 module.exports.sequelize = sequelize;

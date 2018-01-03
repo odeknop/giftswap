@@ -5,9 +5,6 @@ var express = require("express")
 var path = require('path');
 var bodyParser = require('body-parser')
 
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize(process.env.DATABASE_URL)
-
 // create application/json parser
 var jsonParser = bodyParser.json()
 
