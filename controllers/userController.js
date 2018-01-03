@@ -42,15 +42,16 @@ exports.user_gifts = function(req, res) {
 			}
 		}
 		if(index < limit) {
-			title = gift.title
 			interestsCount = gift.dataValues.interestsCount
+			console.log("interestsCount=" + interestsCount)
 			if(interestsCount > 0) {
-				title = interestsCount + " 👤 " + title
+				person = interestsCount > 1 ? "intéressés" : "interessé"
+				subtitle = gift.location + "\n" + interestsCount + " 👤 " + person
 			}
 			element = {
-				"title": title,
+				"title": gift.title,
 				"image_url": gift.picture,
-				"subtitle": gift.location,
+				"subtitle": subtitle,
 				"buttons": [{
 					"set_attributes":
 					{
