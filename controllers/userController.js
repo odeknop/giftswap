@@ -117,7 +117,18 @@ exports.user_gifts = function(req, res) {
 							"image_aspect_ratio": "square",
 							"elements": elements
 						}
-					}
+					},
+					"quick_replies": [
+						{
+							"set_attributes":
+							{
+								"offset": 0,
+								"limit": 9
+							},
+							"title": "Retour au menu",
+							"block_names": ["Mon compte"]
+						}
+					]
 				}]
 			}
 		} else {
@@ -247,7 +258,7 @@ exports.user_gifts_interests = function(req, res) {
 					},
 					"quick_replies": [
 						{
-							"title": "Retour",
+							"title": "Revenir à mes Gifts",
 							"block_names": ["Liste de mes Gifts"]
 						}
 					]
