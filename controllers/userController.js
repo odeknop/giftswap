@@ -244,14 +244,13 @@ exports.user_gifts_interests = function(req, res) {
 							"image_aspect_ratio": "square",
 							"elements": elements
 						}
-					}
-				},{
+					},
 					"quick_replies": [
 						{
 							"title": "Retour",
 							"block_names": ["Liste de mes Gifts"]
 						}
-					],
+					]
 				}]
 			}
 		} else {
