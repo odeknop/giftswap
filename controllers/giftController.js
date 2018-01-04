@@ -3,45 +3,38 @@ const sequelize = require('sequelize')
 
 exports.index = function(req, res, next) {
 	
-	offset = parseInt(req.query.offset)
-	limit = parseInt(req.query.limit)
-	buyerId = parseInt(req.query.buyerId)
-	include = []
-
 	addNext = false
 	elements = []
 
 	models.Gift.hasMany(models.Interest, {foreignKey: 'giftId'})
 
-	offsetObj = {
-		offset: offset
+	queryParams = {
+		order: [['ID', 'desc']]
 	}
 
-	limitObj = {}
-
-	if(limit) {
-		limitObj = {
-			limit: limit + 1
-		}
-	}
-
-	if(buyerId) {
-		include = [{
-			model: models.Interest, "where": {"buyerId": buyerId}
+	if(req.query.dbUid) {
+		queryParams.include = [{
+			model: models.Interest, "where": {"buyerId": parseInt(req.query.dbUid)}
 		}]
 	}
+	
+	if(req.query.offset) {
+		queryParams.offset = parseInt(req.query.offset)
+	}
 
-	models.Gift.findAll({
-		limitObj,
-		offsetObj,
-		order: [['ID', 'desc']],
-		include: include,
-	}).each((gift, index, length) => {
-		if(index == 0) {
+	if(req.query.limit) {
+		queryParams.limit = parseInt(req.query.limit) + 1 // limit increment is used for the 'next' pagination page display condition
+	}
+
+	offset = queryParams.offset
+	limit = queryParams.limit
+
+	models.Gift.findAll(queryParams).each((gift, index, length) => {
+		if(index == 0 && typeof limit !== 'undefined') {
 			if(length > limit) {
 				addNext = true
 			}
-			if(offset > 0) {
+			if(typeof offset !== 'undefined' && offset > 0) {
 				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
 				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
 				prevUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + prevOffset + "&limit=" + prevLimit + "&buyerId=" + buyerId
@@ -61,7 +54,7 @@ exports.index = function(req, res, next) {
 				elements.push(prevElement)
 			}
 		}
-		if(index < limit) {
+		if(typeof limit === 'undefined' || index < limit) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			element = {
@@ -93,7 +86,7 @@ exports.index = function(req, res, next) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext == true) {
+		if(addNext == true && typeof offset !== 'undefined') {
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit + "&buyerId=" + buyerId
@@ -237,6 +230,7 @@ exports.gift_search = function(req, res) {
 	from_lat = req.query.searchLatitude
 	from_long = req.query.searchLongitude
 	searchRange = req.query.searchRange
+	owner = req.query.dbUid
 
 	radius = parseInt(searchRange.split(' ')[0])*1000
 	console.log("radius=" + radius)
@@ -247,7 +241,7 @@ exports.gift_search = function(req, res) {
 	addNext = false
 	elements = []
 
-	models.Gift.search(query.trim(), from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
+	models.Gift.search(query.trim(), owner, from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
 		if(index == 0) {
 			if(length > limit) {
 				addNext = true

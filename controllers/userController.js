@@ -1,28 +1,37 @@
 const models = require('../models')
 const sequelize = require('sequelize')
+const Op = sequelize.Op
 
 exports.user_gifts = function(req, res) {
-
-	offset = parseInt(req.query.offset)
-	limit = parseInt(req.query.limit)
 
 	addNext = false
 	elements = []
 
-	// More info about subqueries at http://srlm.io/2015/02/04/sequelize-subqueries/
-	models.Gift.findAll({
+	queryParams = {
 		attributes: Object.keys(models.Gift.attributes).concat([[
-			sequelize.literal('(SELECT COUNT(*) FROM interests WHERE interests."giftId" = Gift."ID")'),
+			sequelize.literal('(SELECT COUNT(*) FROM interests WHERE interests."giftId" = Gift."ID" AND interests."buyerId" != gift.owner)'),
 			'interestsCount'
 		]]),
 		where: {
 			owner: req.params.id,
 		},
-		offset: offset,
-		limit: limit + 1,
 		order: [sequelize.literal('"interestsCount" DESC')]
-	}).each((gift, index, length) => {
-		if(index === 0) {
+	}
+
+	if(req.query.offset) {
+		queryParams.offset = parseInt(req.query.offset)
+	}
+
+	if(req.query.limit) {
+		queryParams.limit = parseInt(req.query.limit) + 1 // limit increment is used for the 'next' pagination page display condition
+	}
+
+	offset = queryParams.offset
+	limit = queryParams.limit
+
+	// More info about subqueries at http://srlm.io/2015/02/04/sequelize-subqueries/
+	models.Gift.findAll(queryParams).each((gift, index, length) => {
+		if(index === 0 && typeof limit != 'undefined') {
 			if(length > limit) {
 				addNext = true
 			}
@@ -46,7 +55,7 @@ exports.user_gifts = function(req, res) {
 				elements.push(prevElement)
 			}
 		}
-		if(index < limit) {
+		if(typeof limit === 'undefined' || index < limit) {
 			interestsCount = gift.dataValues.interestsCount
 			subtitle = gift.location
 			if(interestsCount > 0) {
@@ -88,7 +97,7 @@ exports.user_gifts = function(req, res) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext === true) {
+		if(addNext === true && typeof offset != 'undefined') {
 			nextOffset = offset === 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts/?offset=" + nextOffset + "&limit=" + nextLimit
@@ -139,16 +148,36 @@ exports.user_gifts = function(req, res) {
 
 exports.user_gifts_interests = function(req, res) {
 
-	offset = parseInt(req.query.offset)
-	limit = parseInt(req.query.limit)
+	models.Interest.belongsTo(models.User, {foreignKey: 'buyerId'})
+	models.Interest.belongsTo(models.Gift, {foreignKey: 'giftId'})
+
+	queryParams = {
+		where: {
+			ownerId: req.params.id,
+			giftId: req.params.giftId,
+			buyerId: {
+				[Op.ne]: req.params.id
+			}
+		},
+		include: [models.User, models.Gift],
+		order: [['giftId','desc']]
+	}
+
+	if(req.query.offset) {
+		queryParams.offset = parseInt(req.query.offset)
+	}
+
+	if(req.query.limit) {
+		queryParams.limit = parseInt(req.query.limit) + 1 // limit increment is used for the 'next' pagination page display condition
+	}
+
+	offset = queryParams.offset
+	limit = queryParams.limit
 
 	addNext = false
 
 	owner = {}
 	elements = []
-
-	models.Interest.belongsTo(models.User, {foreignKey: 'buyerId'})
-	models.Interest.belongsTo(models.Gift, {foreignKey: 'giftId'})
 
 	models.User.findOne({
 		where: {
@@ -156,22 +185,13 @@ exports.user_gifts_interests = function(req, res) {
 		}
 	}).then(user => {
 		owner = user
-		return models.Interest.findAll({
-			where: {
-				ownerId: req.params.id,
-				giftId: req.params.giftId
-			},
-			include: [models.User, models.Gift],
-			offset: offset,
-			limit: limit + 1,
-			order: [['giftId','desc']]
-		})
+		return models.Interest.findAll(queryParams)
 	}).each((interest, index, length) => {
-		if(index === 0) {
+		if(index === 0 && typeof limit != 'undefined') {
 			if(length > limit) {
 				addNext = true
 			}
-			if(offset > 0) {
+			if(typeof offset != 'undefined' && offset > 0) {
 				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
 				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
 				prevUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts/" + req.params.giftId + "?offset=" + prevOffset + "&limit=" + prevLimit
@@ -189,7 +209,7 @@ exports.user_gifts_interests = function(req, res) {
 				limit = length
 			}
 		}
-		if(index < limit) {
+		if(typeof limit === 'undefined' || index < limit) {
 			title = interest.user.firstName + " est intéressé par ton annonce"
 			element = {
 				"title": title,
@@ -207,7 +227,7 @@ exports.user_gifts_interests = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"actionedGiftId": interest.gift.ID, // buyerId
+						"actionedGiftId": interest.gift.ID,
 					},
 					"block_names": ["Refuser"],
 					"type": "show_block",
@@ -216,7 +236,7 @@ exports.user_gifts_interests = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"msgRecipient": interest.user.uid,
+						"msgRecipient": interest.user.uid, //buyerId
 					},
 					"type": "show_block",
 					"block_names": ["Send Message"],
@@ -226,7 +246,7 @@ exports.user_gifts_interests = function(req, res) {
 			elements.push(element)
 		}
 	}).then(() => {
-		if(addNext === true) {
+		if(addNext === true && typeof offset != 'undefined') {
 			nextOffset = offset === 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
 			nextUrl = req.protocol + "://" + req.hostname + "/users/" + req.params.id + "/gifts/" + giftId + "interests?offset=" + nextOffset + "&limit=" + nextLimit

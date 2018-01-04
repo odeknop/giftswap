@@ -16,19 +16,17 @@ module.exports = function(sequelize, DataTypes) {
 		createdAt: Sequelize.DATE,
 		updatedAt: Sequelize.DATE,
 	})
-	Gift.search = function(query, from_lat, from_long, radius, offset, limit) {
+	Gift.search = function(query, owner, from_lat, from_long, radius, offset, limit) {
 		if(sequelize.options.dialect !== 'postgres') {
 			console.log('Search is only implemented on POSTGRES database')
 			return
 		}
 		var Gift = this
-		console.log("query=" + query)
-		if(query === '' || query===undefined) {
-			and = ''
-		} else {
-			and = 'AND "document" @@ plainto_tsquery(\'french\', ' + sequelize.getQueryInterface().escape(query) + ')'
+		andClause = 'AND owner != ' + owner
+		if(query) {
+			andClause += ' AND "document" @@ plainto_tsquery(\'french\', ' + sequelize.getQueryInterface().escape(query) + ')'
 		}
-		return sequelize.query('SELECT *, ST_Distance_sphere(st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)), st_makepoint(cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision))) as distance FROM "' + Gift.tableName + '" AS gb WHERE ST_Distance_sphere( st_makepoint( cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision)), st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)) ) < ' + radius + '  ' + and + ' LIMIT ' + limit + ' OFFSET ' + offset, { model: Gift })
+		return sequelize.query('SELECT *, ST_Distance_sphere(st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)), st_makepoint(cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision))) as distance FROM "' + Gift.tableName + '" AS gb WHERE ST_Distance_sphere( st_makepoint( cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision)), st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)) ) < ' + radius + '  ' + andClause + ' LIMIT ' + limit + ' OFFSET ' + offset, { model: Gift })
 	}
 	Gift.addFullTextIndex = function() {
 		if(sequelize.options.dialect !== 'postgres') {
