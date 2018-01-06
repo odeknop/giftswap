@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
 		giftId: Sequelize.INTEGER,
 		ownerId: Sequelize.INTEGER,
 		buyerId: Sequelize.INTEGER,
-		status: Sequelize.INTEGER,
+		status: Sequelize.STRING,
 		createdAt: Sequelize.DATE,
 		updatedAt: Sequelize.DATE
     })
