@@ -69,7 +69,7 @@ exports.user_gifts = function(req, res) {
 				"buttons": [{
 					"set_attributes":
 					{
-						"selectedGiftId": gift.ID,
+						"actionedGiftId": gift.ID,
 					},
 					"block_names": ["Modifier Gift"],
 					"type": "show_block",
@@ -87,7 +87,7 @@ exports.user_gifts = function(req, res) {
 				{
 					"set_attributes":
 					{
-						"selectedGiftId": gift.ID,
+						"actionedGiftId": gift.ID,
 					},
 					"type": "show_block",
 					"block_names": ["Retirer de la vente"],
