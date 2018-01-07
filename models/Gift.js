@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
 		if(query) {
 			andClause += ' AND "document" @@ plainto_tsquery(\'french\', ' + sequelize.getQueryInterface().escape(query) + ')'
 		}
-		return sequelize.query('SELECT *, ST_Distance_sphere(st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)), st_makepoint(cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision))) as distance FROM "' + Gift.tableName + '" AS gb WHERE ST_Distance_sphere( st_makepoint( cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision)), st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)) ) < ' + radius + '  ' + andClause + ' git ORDER BY distance ASC LIMIT ' + limit + ' OFFSET ' + offset, { model: Gift })
+		return sequelize.query('SELECT *, ST_Distance_sphere(st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)), st_makepoint(cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision))) as distance FROM "' + Gift.tableName + '" AS gb WHERE ST_Distance_sphere( st_makepoint( cast(split_part(gb.coordinates, \',\', 2) as double precision), cast(split_part(gb.coordinates, \',\', 1) as double precision)), st_makepoint(cast(' + from_long + ' as double precision), cast(' + from_lat + ' as double precision)) ) < ' + radius + '  ' + andClause + ' ORDER BY distance ASC LIMIT ' + limit + ' OFFSET ' + offset, { model: Gift })
 	}
 	Gift.addFullTextIndex = function() {
 		if(sequelize.options.dialect !== 'postgres') {
