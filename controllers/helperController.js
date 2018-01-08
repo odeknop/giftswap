@@ -62,7 +62,7 @@ exports.preview_edited_gift = function(req, res, next) {
 						"subtitle": req.query.editGiftLocation,
 						"buttons": [{
 							"type": "show_block",
-							"block_names": ["Edit Gift Description"],
+							"block_names": ["Edit Gift preview description"],
 							"title": "Voir la description"
 						},
 						{
