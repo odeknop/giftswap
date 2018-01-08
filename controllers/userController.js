@@ -1,5 +1,6 @@
 const models = require('../models')
 const sequelize = require('sequelize')
+const utils = require('../helpers/utils')
 const Op = sequelize.Op
 
 exports.user_gifts = function(req, res) {
@@ -57,6 +58,7 @@ exports.user_gifts = function(req, res) {
 		}
 		if(typeof limit === 'undefined' || index < limit) {
 			interestsCount = gift.dataValues.interestsCount
+			title = gift.title + ' ' + utils.getFormattedPrice(gift.price)
 			subtitle = gift.location
 			if(interestsCount > 0) {
 				person = interestsCount > 1 ? "intéressés" : "interessé"

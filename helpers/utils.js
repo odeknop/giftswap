@@ -6,5 +6,8 @@ module.exports = {
 			ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]))
 		return ret.join('&')
 	},
+	getFormattedPrice(price, locale) {
+		return price + ' €'
+	},
 
 }

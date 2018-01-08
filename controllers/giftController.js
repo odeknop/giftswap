@@ -1,5 +1,6 @@
 const models = require('../models')
 const sequelize = require('sequelize')
+const utils = require('../helpers/utils')
 
 exports.index = function(req, res, next) {
 	
@@ -57,7 +58,7 @@ exports.index = function(req, res, next) {
 		if(typeof limit === 'undefined' || index < limit) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
-			title = gift.title + ' ' + gift.price
+			title = gift.title + ' ' + utils.getFormattedPrice(gift.price, null)
 			element = {
 				"title": title,
 				"image_url": gift.picture,
@@ -179,7 +180,7 @@ exports.gift_selection = function(req, res) {
 				ID: gift.owner,
 			}
 		}).then(vendor => {
-			subtitle = gift.title + ' ' + gift.price
+			subtitle = gift.title + ' ' + utils.getFormattedPrice(gift.price, null)
 			json = {
 				"messages": [{
 					"attachment": {
@@ -267,7 +268,7 @@ exports.gift_search = function(req, res) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			location = gift.location + "\n" + Number(Math.round(gift.dataValues.distance/1000+'e1')+'e-1') + " km"
-			title = gift.title + ' ' + gift.price
+			title = gift.title + ' ' + utils.getFormattedPrice(gift.price, null)
 			element = {
 				"title": title,
 				"image_url": gift.picture,
