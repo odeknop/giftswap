@@ -4,8 +4,19 @@ exports.index = function(req, res) {
 	res.sendFile(path.join(__basedir,'views', 'index.html'))
 }
 
-exports.preview = function(req, res) {
-	giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
+exports.preview = function(req, res, next) {
+	if(!req.query.giftTitle && !req.query.giftEditTitle) {
+		return res.status(400).send({error: "Bad Request - Your request is missing parameters. Please verify and resubmit."})
+	}
+	if(req.query.giftTitle && req.query.giftEditTitle) {
+		return res.status(400).send({error: "Bad Request - Your request has wrong parameters. Please verify and resubmit."})
+	}
+
+	if(req.query.giftTitle) {
+		giftTitle = req.query.giftTitle + ' ' + req.query.giftPriceFormatted
+	} else {
+		giftTitle = req.query.giftEditTitle + ' ' + req.query.giftPriceFormatted
+	}
 	preview = {
 		"messages": [{
 			"attachment": {
@@ -37,5 +48,5 @@ exports.preview = function(req, res) {
 			}
 		}]
 	}
-	res.send(preview)
+	return res.send(preview)
 }

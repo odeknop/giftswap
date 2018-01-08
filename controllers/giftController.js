@@ -57,8 +57,9 @@ exports.index = function(req, res, next) {
 		if(typeof limit === 'undefined' || index < limit) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
+			title = gift.title + ' ' + gift.price
 			element = {
-				"title": gift.title,
+				"title": title,
 				"image_url": gift.picture,
 				"subtitle": gift.location,
 				"buttons": [{
@@ -178,6 +179,7 @@ exports.gift_selection = function(req, res) {
 				ID: gift.owner,
 			}
 		}).then(vendor => {
+			subtitle = gift.title + ' ' + gift.price
 			json = {
 				"messages": [{
 					"attachment": {
@@ -187,7 +189,7 @@ exports.gift_selection = function(req, res) {
 							"image_aspect_ratio": "square",
 							"elements": [{
 								"title": vendor.firstName,
-								"subtitle": gift.title,
+								"subtitle": subtitle,
 								"image_url": vendor.profilePicUrl,
 								"buttons": [{
 									"title": "Contacter le vendeur",
@@ -265,8 +267,9 @@ exports.gift_search = function(req, res) {
 			descriptionUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/description"
 			vendorUrl = req.protocol + "://" + req.hostname + "/gifts/" + gift.ID + "/vendor"
 			location = gift.location + "\n" + Number(Math.round(gift.dataValues.distance/1000+'e1')+'e-1') + " km"
+			title = gift.title + ' ' + gift.price
 			element = {
-				"title": gift.title,
+				"title": title,
 				"image_url": gift.picture,
 				"subtitle": location,
 				"buttons": [{
@@ -322,6 +325,7 @@ exports.gift_search = function(req, res) {
 				}]
 			}
 		} else {
+			// TODO: Add button 'See all gifts'
 			json = {
 				"messages": [{
 					"text": "Je n'ai trouvé aucun Gift 😞"
