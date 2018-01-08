@@ -65,7 +65,7 @@ exports.user_gifts = function(req, res) {
 				subtitle += "\n" + interestsCount + " 👤 " + person
 			}
 			element = {
-				"title": gift.title,
+				"title": title,
 				"image_url": gift.picture,
 				"subtitle": subtitle,
 				"buttons": [{
