@@ -213,6 +213,7 @@ exports.user_gifts_interests = function(req, res) {
 		}
 		if(typeof limit === 'undefined' || index < limit) {
 			title = interest.user.firstName + " est intéressé par ton annonce"
+			subtitle = interest.gift.title + ' ' + utils.getFormattedPrice(interest.gift.price)
 			element = {
 				"title": title,
 				"image_url": interest.user.profilePicUrl,
