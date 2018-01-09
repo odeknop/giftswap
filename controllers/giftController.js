@@ -332,13 +332,11 @@ exports.gift_search = function(req, res) {
 				{
 					"text": "Je n'ai trouvé aucun Gift 😞",
 				},
-				{
-					"buttons": [{
-						"type": "json_plugin_url",
-						"url": lastGiftsUrl,
-						"title": "Derniers Gifts"
-					}]
-				}]
+				"buttons": [{
+					"type": "json_plugin_url",
+					"url": lastGiftsUrl,
+					"title": "Derniers Gifts"
+				}]]
 			}
 		}
 		res.send(json)
