@@ -333,12 +333,12 @@ exports.gift_search = function(req, res) {
 						"type": "template",
 						"payload": {
 							"template_type": "button",
-							"text": "Je n'ai trouvé aucun Gift 😞",
+							"text": "Je n'ai trouvé aucun Gifts 😞\nJe te propose de parcourir les derniers Gifts ajoutés.",
 							"buttons": [
 							{
 								"type": "json_plugin_url",
 								"url": lastGiftsUrl,
-								"title": "Derniers Gifts"
+								"title": "Afficher"
 							}]
 						}
 					}
