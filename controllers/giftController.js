@@ -243,7 +243,7 @@ exports.gift_search = function(req, res) {
 	addNext = false
 	elements = []
 
-	models.Gift.search(query.trim(), owner, from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
+	models.Gift.search(queryString.trim(), owner, from_lat, from_long, radius, offset, limit + 1).each((gift, index, length) => {
 		if(index == 0) {
 			if(length > limit) {
 				addNext = true
@@ -251,7 +251,7 @@ exports.gift_search = function(req, res) {
 			if(offset > 0) {
 				prevOffset = offset == 9 ? prevOffset = 0 : prevOffset = offset - 8
 				prevLimit = offset == 9 ? prevLimit = 9 : prevLimit = 8
-				prevUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + query + "&offset=" + prevOffset + "&limit=" + prevLimit
+				prevUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + queryString + "&offset=" + prevOffset + "&limit=" + prevLimit
 				prevElement = {
 					"title": "Pagination",
 					"buttons": [{
@@ -300,7 +300,7 @@ exports.gift_search = function(req, res) {
 		if(addNext == true) {
 			nextOffset = offset == 0 ? nextOffset = 9 : nextOffset = offset + 8
 			nextLimit = 8
-			nextUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + query + "&offset=" + nextOffset + "&limit=" + nextLimit
+			nextUrl = req.protocol + "://" + req.hostname + "/gifts/search?query=" + queryString + "&offset=" + nextOffset + "&limit=" + nextLimit
 			nextElement = {
 				"title": "Navigation",
 				"buttons": [{
