@@ -316,6 +316,8 @@ exports.gift_search = function(req, res) {
 			json = {
 				"messages": [{
 					"text": elements.length + " Gift" + s + " trouvé" + s,
+				},
+				{
 					"attachment": {
 						"type": "template",
 						"payload": {
