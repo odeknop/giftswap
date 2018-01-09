@@ -321,7 +321,13 @@ exports.gift_search = function(req, res) {
 							"image_aspect_ratio": "square",
 							"elements": elements
 						}
-					}
+					},
+					"quick_replies": [
+						{
+							"title": "Options de recherche",
+							"block_names": ["Chercher un Gift"]
+						}
+					]
 				}]
 			}
 		} else {
