@@ -326,7 +326,7 @@ exports.gift_search = function(req, res) {
 				}]
 			}
 		} else {
-			lastGiftsUrl = req.protocol + "://" + req.hostname + "/gifts/search"
+			lastGiftsUrl = req.protocol + "://" + req.hostname + "/gifts/search?offset=0&limit=9"
 			json = {
 				"messages": [{
 					"attachment": {
