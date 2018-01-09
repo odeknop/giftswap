@@ -312,8 +312,10 @@ exports.gift_search = function(req, res) {
 			elements.push(nextElement)
 		}
 		if(elements.length > 0) {
+			s = elements.length > 1 ? "s" : ""
 			json = {
 				"messages": [{
+					"text": elements.length + " Gift" + s + " trouvé" + s,
 					"attachment": {
 						"type": "template",
 						"payload": {
