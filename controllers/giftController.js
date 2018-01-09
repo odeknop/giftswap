@@ -215,7 +215,7 @@ exports.gift_selection = function(req, res) {
 exports.gift_search = function(req, res) {
 
 	searchTerms = []
-	query = ''
+	queryString = ''
 	if(req.query.searchKey1 != undefined) {
 		searchTerms.push(req.query.searchKey1)
 	}
@@ -227,7 +227,7 @@ exports.gift_search = function(req, res) {
 	}
 
 	searchTerms.forEach( term => {
-		query += term + ' '
+		queryString += term + ' '
 	})
 
 	from_lat = req.query.searchLatitude
@@ -236,7 +236,6 @@ exports.gift_search = function(req, res) {
 	owner = req.query.dbUid
 
 	radius = parseInt(searchRange.split(' ')[0])*1000
-	console.log("radius=" + radius)
 
 	offset = parseInt(req.query.offset)
 	limit = parseInt(req.query.limit)
@@ -326,7 +325,6 @@ exports.gift_search = function(req, res) {
 				}]
 			}
 		} else {
-			lastGiftsUrl = req.protocol + "://" + req.hostname + "/gifts/search?offset=0&limit=9"
 			json = {
 				"messages": [{
 					"attachment": {
@@ -336,8 +334,8 @@ exports.gift_search = function(req, res) {
 							"text": "Je n'ai trouvé aucun Gifts 😞\nJe te propose de parcourir les derniers Gifts ajoutés.",
 							"buttons": [
 							{
-								"type": "json_plugin_url",
-								"url": lastGiftsUrl,
+								"type": "show_block",
+								"block_names": ["Derniers Gifts"],
 								"title": "Afficher"
 							}]
 						}
