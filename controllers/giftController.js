@@ -328,17 +328,24 @@ exports.gift_search = function(req, res) {
 		} else {
 			lastGiftsUrl = req.protocol + "://" + req.hostname + "/gifts/search"
 			json = {
-				"messages": [
-				{
-					"text": "Je n'ai trouvé aucun Gift 😞",
-					"buttons": [{
-						"type": "json_plugin_url",
-						"url": lastGiftsUrl,
-						"title": "Derniers Gifts"
-					}]
+				"messages": [{
+					"attachment": {
+						"type": "template",
+						"payload": {
+							"template_type": "button",
+							"text": "Je n'ai trouvé aucun Gift 😞",
+							"buttons": [
+							{
+								"type": "json_plugin_url",
+								"url": lastGiftsUrl,
+								"title": "Derniers Gifts"
+							}]
+						}
+					}
 				}]
 			}
 		}
 		res.send(json)
 	})
 }
+
