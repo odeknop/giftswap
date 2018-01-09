@@ -315,6 +315,9 @@ exports.gift_search = function(req, res) {
 			s = elements.length > 1 ? "s" : ""
 			json = {
 				"messages": [{
+					"text": elements.length + " Gift" + s + " trouvé" + s,
+				},
+				{
 					"attachment": {
 						"type": "template",
 						"payload": {
@@ -329,9 +332,6 @@ exports.gift_search = function(req, res) {
 							"block_names": ["Chercher un Gift"]
 						}
 					]
-				},
-				{
-					"text": elements.length + " Gift" + s + " trouvé" + s,
 				}]
 			}
 		} else {
