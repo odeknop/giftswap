@@ -14,7 +14,7 @@
     "forest-express-sequelize": "^2.0.4",
     "pg": "^7.4.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.28.6"
+    "sequelize": "^4.32.1"
   },
   "devDependencies": {},
   "scripts": {
