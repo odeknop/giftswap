@@ -15,4 +15,6 @@ router.get('/preview', helperController.preview)
 /* GET gift preview edited Gift. */
 router.get('/preview-edited-gift', helperController.preview_edited_gift)
 
+router.get('/test', helperController.test)
+
 module.exports = router
