@@ -86,18 +86,16 @@ exports.preview_edited_gift = function(req, res, next) {
 exports.test = function(req, res, next) {
 	test = {
 		"messages": [{
-			{
-				"attachment": {
-					"type": "template",
-					"payload": {
-						"template_type": "button",
-						"text": "hello",
-						"buttons": [{
-							"type": "show_block",
-							"block_names": ["Block name"],
-							"title": "My button"
-						}]
-					}
+			"attachment": {
+				"type": "template",
+				"payload": {
+					"template_type": "button",
+					"text": "hello",
+					"buttons": [{
+						"type": "show_block",
+						"block_names": ["Block name"],
+						"title": "My button"
+					}]
 				}
 			},
 			"quick_replies": [{
