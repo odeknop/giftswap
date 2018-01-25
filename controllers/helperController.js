@@ -106,7 +106,7 @@ exports.test = function(req, res, next) {
 					}]
 				}
 			}
-		}
+		}]
 	}
 	return res.send(test)
 }
