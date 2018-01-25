@@ -95,17 +95,19 @@ exports.test = function(req, res, next) {
 						"type": "show_block",
 						"block_names": ["Block name"],
 						"title": "My button"
-					}],
-					"quick_replies": [{
-						"title": "my QR1",
-						"block_names": ["QR1"]
-					},
-					{
-						"title": "my QR2",
-						"block_names": ["QR2"]
 					}]
 				}
 			}
+		},
+		{
+			"quick_replies": [{
+				"title": "my QR1",
+				"block_names": ["QR1"]
+			},
+			{
+				"title": "my QR2",
+				"block_names": ["QR2"]
+			}]
 		}]
 	}
 	return res.send(test)
